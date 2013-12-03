@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 					}
 					postEntity.setContentType("application/json");
 
-					HttpPost httpPost = new HttpPost("http://10.0.2.2:8080/api/logevents");
+					HttpPost httpPost = new HttpPost("http://example.com/api/logevents");
 					httpPost.setEntity(postEntity);
 
 					try {
@@ -92,16 +92,15 @@ public class MainActivity extends Activity {
 		// wait until we have this many events to flush a batch of logs...
 		.batchSize(100)
 		// ... or until this many seconds have passed since our last flush
-		.flushIntervalSeconds(5)
-		// when developing, log all messages to logcat
+		.flushIntervalSeconds(1800)
+		// when developing, log all messages to logcat (everything is flushed to our sink)
 		.debugLogLevel(android.util.Log.VERBOSE)
-		// in production, only log INFO messages and above
+		// in production, only log INFO messages and above to logcat (everything is flushed to our sink)
 		.productionLogLevel(android.util.Log.INFO)
 		// the actual sink used when it's time to flush logs (required if you ever enable log flushing!)
 		.logSink(new ExampleSink());
 
-		
-		// queue up a handler to log some stuff
+		// queue up a handler to create logs
 		final Handler handler = new Handler();
 		handler.post(new Runnable() {
 			int counter = 0;
