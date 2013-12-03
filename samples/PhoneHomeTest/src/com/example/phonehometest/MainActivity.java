@@ -20,6 +20,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		
 		PhoneHomeConfig.getInstance()
 		// disable sending log flushing for now (toggled by the button in this activity)
 		.enabled(false)
@@ -34,6 +35,7 @@ public class MainActivity extends Activity {
 		// the actual sink used when it's time to flush logs (required if you ever enable log flushing!)
 		.logSink(new ExampleSink());
 
+		
 		// queue up a handler to create logs
 		final Handler handler = new Handler();
 		handler.post(new Runnable() {
