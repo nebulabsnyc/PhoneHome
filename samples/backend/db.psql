@@ -1,0 +1,109 @@
+CREATE DATABASE phonehome
+    WITH OWNER = postgres;
+
+\connect phonehome
+
+CREATE EXTENSION "uuid-ossp";
+
+
+-- barebones user setup
+CREATE TABLE "users" (
+    "id"                 UUID           PRIMARY KEY
+                                        DEFAULT uuid_generate_v4(),
+    "username"           TEXT           UNIQUE
+                                        NOT NULL
+);
+
+
+-- define our logcat criteria here; users for which all criteria values are null or matched are included!
+CREATE TABLE "logcat_criteria" (
+    "id"                       UUID         PRIMARY KEY
+                                            DEFAULT uuid_generate_v4(),
+
+    "user_id"                  UUID         REFERENCES "users"("id"),
+    "android_model"            TEXT,
+    "android_sdk_version"      INT,
+    "android_app_version"      INT,
+
+    "enabled"                  BOOLEAN      NOT NULL,
+
+    CHECK ("user_id" IS NOT NULL
+        OR "android_model" IS NOT NULL
+        OR "android_sdk_version" IS NOT NULL
+        OR "android_app_version" IS NOT NULL),
+
+    CHECK ("android_model" <> '')
+);
+
+CREATE INDEX logcat_criteria_by_user_id             ON "logcat_criteria" ("user_id");
+CREATE INDEX logcat_criteria_by_android_model       ON "logcat_criteria" (LOWER("android_model"));
+CREATE INDEX logcat_criteria_by_android_sdk_version ON "logcat_criteria" ("android_sdk_version");
+CREATE INDEX logcat_criteria_by_android_app_version ON "logcat_criteria" ("android_app_version");
+
+
+-- users who match criteria
+CREATE TABLE "logcat_users" (
+    "user_id"                  UUID         REFERENCES "users"("id")
+                                            NOT NULL,
+    "logcat_criteria_id"       UUID         REFERENCES "logcat_criteria"("id")
+                                            NOT NULL,
+    PRIMARY KEY("user_id", "logcat_criteria_id")
+);
+
+CREATE INDEX logcat_users_by_logcat_criteria_id ON "logcat_users"("logcat_criteria_id");
+
+
+-- track the android_info with each logcat event
+CREATE TABLE "android_info" (
+    "id"                       UUID         PRIMARY KEY
+                                            DEFAULT uuid_generate_v4(),
+    "model"                    TEXT         NOT NULL,
+    "sdk_version"              INT          NOT NULL,
+    "app_version"              INT          NOT NULL,
+
+    UNIQUE("model", "sdk_version", "app_version"),
+    CHECK ("model" <> '')
+);
+
+
+-- the action events
+CREATE TABLE logcat_events (
+    "user_id"                  UUID         REFERENCES "users"("id")
+                                            NOT NULL,
+    "client_ts"                TIMESTAMP    NOT NULL,
+    "level"                    INT          NOT NULL,
+    "tag"                      TEXT         NOT NULL,
+    "message"                  TEXT         NOT NULL,
+
+    -- keep track of exactly which android_info_id was matched per logline; a user can have multiple devices!
+    "android_info_id"          UUID         REFERENCES "android_info"("id")
+                                            NOT NULL,
+
+    -- allow de-duping identical client timestamps
+    "insert_order"             SERIAL
+);
+
+CREATE INDEX logcat_events_by_user_id_client_ts ON "logcat_events"("user_id", "client_ts");
+
+-- ignore duplicate lines
+CREATE RULE "logcat_events_insert_ignore" AS ON INSERT TO "logcat_events"
+    WHERE EXISTS (
+        SELECT 1
+        FROM logcat_events
+        WHERE user_id = NEW.user_id
+        AND   android_info_id = NEW.android_info_id
+        AND   level = NEW.level
+        AND   tag = NEW.tag
+        AND   message = NEW.message
+        AND   client_ts = NEW.client_ts)
+    DO INSTEAD NOTHING;
+
+
+-- add some test data
+INSERT INTO users ("id", "username")
+    -- matches hard-coded sample user_id in flaskapp.py
+    VALUES('9f13322ea7c04539bef01f488c70e431'::uuid, 'testuser');
+
+INSERT INTO logcat_criteria ("enabled", "android_app_version")
+    -- matches our sample app (versionCode == 1)
+    VALUES(true, 1);
