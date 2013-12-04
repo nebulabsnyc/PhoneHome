@@ -8,8 +8,8 @@ Developed By
 
 PhoneHome is made with love by Nebula Labs, Inc.
 
-* Christina Cacioppo - <@christinacaci>
-* Matt Spitz - <@mattspitz>
+* Christina Cacioppo - [@christinacaci](http://twitter.com/christinacaci)
+* Matt Spitz - [@mattspitz](http://twitter.com/mattspitz)
 
 License
 -------
