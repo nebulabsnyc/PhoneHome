@@ -16,7 +16,7 @@ public final class ExampleEligibilityChecker {
 	private final Context context;
 	private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance("PhoneHomeTest");
 
-	public ExampleEligibilityChecker(Context context) {
+	public ExampleEligibilityChecker(final Context context) {
 		this.context = context;
 	}
 
@@ -27,7 +27,7 @@ public final class ExampleEligibilityChecker {
 	public void checkEligibility(final EligibilityCallback eligibilityCallback) {
 		new AsyncTask<Void, Void, Boolean>() {
 			@Override
-			protected Boolean doInBackground(Void... params) {
+			protected Boolean doInBackground(final Void... params) {
 				HttpGet httpGet = new HttpGet(HTTP_ENDPOINT);
 				httpGet.setHeaders(Utils.getAndroidHeaders(context));
 
@@ -35,15 +35,15 @@ public final class ExampleEligibilityChecker {
 				try {
 					response = httpClient.execute(httpGet);
 					String json = EntityUtils.toString(response.getEntity(), "UTF-8");
-					
+
 					JSONObject obj = new JSONObject(json);
 					return obj.getBoolean("is_eligible");
-					
+
 				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
 			}
-			
+
 			@Override
 			protected void onPostExecute(final Boolean isEligible) {
 				eligibilityCallback.handleEligibilty(isEligible);

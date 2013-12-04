@@ -27,29 +27,30 @@ public final class PhoneHomeLogQueue {
 			// 1 minute in production
 			flushCheckIntervalMillis = 300000;
 
-		(new Timer()).scheduleAtFixedRate(
-				new TimerTask() {
-					public void run() {
-						try {
-							maybeFlushQueue();
-						} catch (RuntimeException ex) {
-							Log.e(TAG, "Caught exception flushing log queue", ex);
-						}
-					}
-				},
-				flushCheckIntervalMillis,
-				flushCheckIntervalMillis);
+		(new Timer()).scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					maybeFlushQueue();
+				} catch (RuntimeException ex) {
+					Log.e(TAG, "Caught exception flushing log queue", ex);
+				}
+			}
+		}, flushCheckIntervalMillis, flushCheckIntervalMillis);
 	}
 
 	private static PhoneHomeLogQueue INSTANCE = null;
+
 	public static synchronized PhoneHomeLogQueue getInstance() {
 		if (INSTANCE == null)
 			INSTANCE = new PhoneHomeLogQueue();
 		return INSTANCE;
 	}
 
-	public void enqueue(final Date when, final int level, final String tag, final String message) {
-		// initialize lastFlush so we know when to start our minimum flush interval
+	public void enqueue(final Date when, final int level, final String tag,
+			final String message) {
+		// initialize lastFlush so we know when to start our minimum flush
+		// interval
 		if (lastFlush == null)
 			lastFlush = new Date();
 
@@ -61,11 +62,13 @@ public final class PhoneHomeLogQueue {
 			return;
 
 		if (lastFlush == null)
-			throw new IllegalStateException("lastFlush should have been initialized by this point");
+			throw new IllegalStateException(
+					"lastFlush should have been initialized by this point");
 
 		final Date now = new Date();
 		final int batchSize = PhoneHomeConfig.getInstance().getBatchSize();
-		final int flushTimeSeconds = PhoneHomeConfig.getInstance().getFlushIntervalSeconds();
+		final int flushTimeSeconds = PhoneHomeConfig.getInstance()
+				.getFlushIntervalSeconds();
 
 		if (queuedEvents.size() >= batchSize
 				|| (now.getTime() - lastFlush.getTime()) > flushTimeSeconds * 1000) {
@@ -81,9 +84,8 @@ public final class PhoneHomeLogQueue {
 		if (!logEventBatch.isEmpty()) {
 			// don't use our PhoneHomeLogger, lest this queue up another batch
 			Log.d(TAG, "Flushing: " + logEventBatch.size() + " log events.");
-			PhoneHomeConfig.getInstance()
-			.getLogSink()
-			.flushLogs(Collections.unmodifiableList(logEventBatch));
+			PhoneHomeConfig.getInstance().getLogSink()
+					.flushLogs(Collections.unmodifiableList(logEventBatch));
 		}
 	}
 }

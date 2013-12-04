@@ -12,22 +12,22 @@ import android.os.Build;
 public final class Utils {
 	// this points at localhost on whatever machine the meulator's running on; obviously change this to suit your needs
 	static final String HTTP_BASE = "http://10.0.2.2";
-	
+
 	private Utils() {}
-	
+
 	public static class AndroidInfo {
 		public final String model;
 		public final int sdkVersion;
 		public final int appVersion;
-		
+
 		private AndroidInfo(final String model, final int sdkVersion, final int appVersion) {
 			this.model = model;
 			this.sdkVersion = sdkVersion;
 			this.appVersion = appVersion;
 		}
 	}
-	
-	public static AndroidInfo getAndroidInfo(Context context) {
+
+	public static AndroidInfo getAndroidInfo(final Context context) {
 		int versionCode = -1;
 		try {
 			PackageManager manager = context.getPackageManager();
@@ -37,11 +37,11 @@ public final class Utils {
 		} catch (NameNotFoundException nnf) {
 			throw new RuntimeException("Couldn't get package versionCode!", nnf);
 		}
-		
+
 		return new AndroidInfo(Build.MODEL, Build.VERSION.SDK_INT, versionCode);
 	}
-	
-	static Header[] getAndroidHeaders(Context context) {
+
+	static Header[] getAndroidHeaders(final Context context) {
 		// see backend example for how these are used to associate log events with users
 		AndroidInfo androidInfo = getAndroidInfo(context);
 		return new Header[] {

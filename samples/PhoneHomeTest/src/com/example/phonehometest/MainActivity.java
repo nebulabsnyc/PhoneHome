@@ -1,7 +1,5 @@
 package com.example.phonehometest;
 
-
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,28 +20,25 @@ public class MainActivity extends Activity {
 	private ExampleEligibilityChecker eligibilityChecker;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-
 		PhoneHomeConfig.getInstance()
-		// disable sending log flushing for now (eligibility checked by button below)
-		.enabled(false)
-		// wait until we have this many events to flush a batch of logs...
-		.batchSize(100)
-		// ... or until this many seconds have passed since our last flush
-		.flushIntervalSeconds(1800)
-		// when developing, log all messages to logcat (everything is flushed to our sink)
-		.debugLogLevel(android.util.Log.VERBOSE)
-		// in production, only log INFO messages and above to logcat (everything is flushed to our sink)
-		.productionLogLevel(android.util.Log.INFO)
-		// the actual sink used when it's time to flush logs (required if you ever enable log flushing!)
-		.logSink(new ExampleSink(this));
-
+				// disable sending log flushing for now (eligibility checked by button below)
+				.enabled(false)
+				// wait until we have this many events to flush a batch of logs...
+				.batchSize(100)
+				// ... or until this many seconds have passed since our last flush
+				.flushIntervalSeconds(1800)
+				// when developing, log all messages to logcat (everything is flushed to our sink)
+				.debugLogLevel(android.util.Log.VERBOSE)
+				// in production, only log INFO messages and above to logcat (everything is flushed to our sink)
+				.productionLogLevel(android.util.Log.INFO)
+				// the actual sink used when it's time to flush logs (required if you ever enable log flushing!)
+				.logSink(new ExampleSink(this));
 
 		eligibilityChecker = new ExampleEligibilityChecker(this);
-
 
 		AndroidInfo androidInfo = Utils.getAndroidInfo(this);
 		((TextView) findViewById(R.id.model)).setText("Model: " + androidInfo.model);
@@ -74,19 +69,19 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
-	public void checkEligibility(View view) {
+	public void checkEligibility(final View view) {
 		eligibilityChecker.checkEligibility(
 				new EligibilityCallback() {
 					@Override
-					public void handleEligibilty(boolean isEligible) {
+					public void handleEligibilty(final boolean isEligible) {
 						PhoneHomeConfig.getInstance()
-						.enabled(isEligible);
+								.enabled(isEligible);
 
 						String description;
 						if (isEligible) {

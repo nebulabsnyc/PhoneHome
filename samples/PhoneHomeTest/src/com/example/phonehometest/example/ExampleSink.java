@@ -21,7 +21,7 @@ public class ExampleSink implements PhoneHomeSink {
 	private final Context context;
 	private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance("PhoneHomeTest");
 
-	public ExampleSink(Context context) {
+	public ExampleSink(final Context context) {
 		this.context = context;
 	}
 
@@ -46,7 +46,7 @@ public class ExampleSink implements PhoneHomeSink {
 	public void flushLogs(final List<PhoneHomeLogEvent> logEvents) {
 		new AsyncTask<Void, Void, Void>() {
 			@Override
-			protected Void doInBackground(Void... params) {
+			protected Void doInBackground(final Void... params) {
 				try {
 					String postBody = encodeLogEvents(logEvents);
 
@@ -58,7 +58,7 @@ public class ExampleSink implements PhoneHomeSink {
 					httpPost.setHeaders(Utils.getAndroidHeaders(context));
 
 					httpClient.execute(httpPost);
-					
+
 				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}

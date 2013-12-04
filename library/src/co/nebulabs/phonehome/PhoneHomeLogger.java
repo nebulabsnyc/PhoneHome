@@ -21,11 +21,11 @@ public final class PhoneHomeLogger {
 		return new PhoneHomeLogger(cls.getSimpleName());
 	}
 
-	private boolean logToLogcat(int level) {
+	private boolean logToLogcat(final int level) {
 		PhoneHomeConfig config = PhoneHomeConfig.getInstance();
 
-		return (BuildConfig.DEBUG) ?
-				level >= config.getDebugLogLevel() : level >= config.getProductionLogLevel();
+		return (BuildConfig.DEBUG) ? level >= config.getDebugLogLevel()
+				: level >= config.getProductionLogLevel();
 	}
 
 	private boolean logToSink() {
@@ -118,15 +118,16 @@ public final class PhoneHomeLogger {
 
 	private void maybeSendLog(final int level, final String message) {
 		if (logToSink())
-			PhoneHomeLogQueue.getInstance()
-			.enqueue(new Date(), level, TAG, message);
+			PhoneHomeLogQueue.getInstance().enqueue(new Date(), level, TAG,
+					message);
 	}
 
-	private void maybeSendLog(final int level, final String message, final Throwable throwable) {
+	private void maybeSendLog(final int level, final String message,
+			final Throwable throwable) {
 		maybeSendLog(level, message + "\n" + getStackTraceAsString(throwable));
 	}
 
-	private static String getStackTraceAsString(Throwable throwable) {
+	private static String getStackTraceAsString(final Throwable throwable) {
 		// lifted from Guava's Throwables.getStackTraceAsString()
 		StringWriter stringWriter = new StringWriter();
 		throwable.printStackTrace(new PrintWriter(stringWriter));
