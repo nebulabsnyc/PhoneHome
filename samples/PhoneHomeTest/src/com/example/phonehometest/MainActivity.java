@@ -7,20 +7,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import co.nebulabs.phonehome.PhoneHomeConfig;
 import co.nebulabs.phonehome.PhoneHomeLogger;
 
+import com.example.phonehometest.example.ExampleEligibilityChecker;
+import com.example.phonehometest.example.ExampleEligibilityChecker.EligibilityCallback;
+import com.example.phonehometest.example.ExampleSink;
+import com.example.phonehometest.example.Utils;
+import com.example.phonehometest.example.Utils.AndroidInfo;
+
 public class MainActivity extends Activity {
 	private static final PhoneHomeLogger Log = PhoneHomeLogger.forClass(MainActivity.class);
+	private ExampleEligibilityChecker eligibilityChecker;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		
+
 		PhoneHomeConfig.getInstance()
 		// disable sending log flushing for now (toggled by the button in this activity)
 		.enabled(false)
@@ -33,22 +39,34 @@ public class MainActivity extends Activity {
 		// in production, only log INFO messages and above to logcat (everything is flushed to our sink)
 		.productionLogLevel(android.util.Log.INFO)
 		// the actual sink used when it's time to flush logs (required if you ever enable log flushing!)
-		.logSink(new ExampleSink());
+		.logSink(new ExampleSink(this));
 
-		
+
+		eligibilityChecker = new ExampleEligibilityChecker(this);
+
+
+		AndroidInfo androidInfo = Utils.getAndroidInfo(this);
+		((TextView) findViewById(R.id.model)).setText("Model: " + androidInfo.model);
+		((TextView) findViewById(R.id.sdkVersion)).setText("SDK version: " + Integer.toString(androidInfo.sdkVersion));		
+		((TextView) findViewById(R.id.appVersion)).setText("App version: " + Integer.toString(androidInfo.appVersion));		
+
 		// queue up a handler to create logs
 		final Handler handler = new Handler();
 		handler.post(new Runnable() {
-			int counter = 0;
+			int debugCounter = 0;
+			int infoCounter = 0;
 
 			@Override
 			public void run() {
-				String text = "I've run " + ++counter + " times!"; 
-				((TextView) findViewById(R.id.counterText)).setText(text);
-
-				if (counter % 2 == 0)
-					Log.i(text);
-				Log.d(text);
+				debugCounter++;
+				Log.d("Debug event #" + debugCounter);
+				
+				if (debugCounter % 2 == 0) {
+					infoCounter++;
+					Log.d("Info event #" + infoCounter);
+				}
+				
+				((TextView) findViewById(R.id.counterText)).setText("Events: " + debugCounter + " debug, " + infoCounter + " info");
 
 				handler.postDelayed(this, 1000);
 			}
@@ -62,13 +80,23 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	private boolean phoneHomeEnabled = false;
-	public void toggleFlushing(View view) {
-		phoneHomeEnabled = !phoneHomeEnabled;
+	public void checkEligibility(View view) {
+		eligibilityChecker.checkEligibility(
+				new EligibilityCallback() {
+					@Override
+					public void handleEligibilty(boolean isEligible) {
+						PhoneHomeConfig.getInstance()
+						.enabled(isEligible);
 
-		PhoneHomeConfig.getInstance()
-		.enabled(phoneHomeEnabled);
-
-		((Button) view).setText(phoneHomeEnabled ? "Disable" : "Enable");
+						String description;
+						if (isEligible) {
+							description = "Eligible to send logs! Make sure you're receiving them on the backend!";
+						} else {
+							description = "NOT eligible to receive logs. Are you sure that the android info above matches one of your logcat criteria?";
+						}
+						
+						((TextView) findViewById(R.id.description)).setText(description);
+					}
+				});
 	}
 }

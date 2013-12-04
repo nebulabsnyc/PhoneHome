@@ -1,7 +1,5 @@
-package com.example.phonehometest;
+package com.example.phonehometest.example;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.http.client.methods.HttpPost;
@@ -10,13 +8,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import co.nebulabs.phonehome.PhoneHomeLogEvent;
 import co.nebulabs.phonehome.PhoneHomeSink;
 
-class ExampleSink implements PhoneHomeSink {
-	AndroidHttpClient httpClient = AndroidHttpClient.newInstance("PhoneHomeTest"); 
+public class ExampleSink implements PhoneHomeSink {
+	// matches with the example backend provided
+	private static final String HTTP_ENDPOINT = Utils.HTTP_BASE + "/logevents";
+
+	private final Context context;
+	private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance("PhoneHomeTest");
+
+	public ExampleSink(Context context) {
+		this.context = context;
+	}
 
 	private String encodeLogEvents(final List<PhoneHomeLogEvent> logEvents) throws JSONException {
 		// JSON-encoded the hard way; you're better off using something nice like Jackson or Gson
@@ -40,27 +47,19 @@ class ExampleSink implements PhoneHomeSink {
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
-				String postBody;
 				try {
-					postBody = encodeLogEvents(logEvents);
-				} catch (JSONException ex) {
-					throw new RuntimeException(ex);
-				}
+					String postBody = encodeLogEvents(logEvents);
 
-				StringEntity postEntity;
-				try {
-					postEntity = new StringEntity(postBody, "UTF-8");
-				} catch (UnsupportedEncodingException ex) {
-					throw new RuntimeException(ex);
-				}
-				postEntity.setContentType("application/json");
+					StringEntity postEntity = new StringEntity(postBody, "UTF-8");
+					postEntity.setContentType("application/json");
 
-				HttpPost httpPost = new HttpPost("http://example.com/api/logevents");
-				httpPost.setEntity(postEntity);
+					HttpPost httpPost = new HttpPost(HTTP_ENDPOINT);
+					httpPost.setEntity(postEntity);
+					httpPost.setHeaders(Utils.getAndroidHeaders(context));
 
-				try {
 					httpClient.execute(httpPost);
-				} catch (IOException ex) {
+					
+				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
 				return null;
