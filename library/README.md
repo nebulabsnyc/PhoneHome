@@ -9,7 +9,7 @@ Configuration
 To configure PhoneHome, access the PhoneHomeConfig singleton and set properties as in the provided sample (samples/PhoneHomeTest)
 
     PhoneHomeConfig.getInstance()
-    // disable sending log flushing for now (toggled by the button in this activity)
+    // disable sending log flushing for now
     .enabled(false)
     // wait until we have this many events to flush a batch of logs...
     .batchSize(100)

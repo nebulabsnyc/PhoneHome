@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
 
 
 		PhoneHomeConfig.getInstance()
-		// disable sending log flushing for now (toggled by the button in this activity)
+		// disable sending log flushing for now (eligibility checked by button below)
 		.enabled(false)
 		// wait until we have this many events to flush a batch of logs...
 		.batchSize(100)
@@ -47,8 +47,8 @@ public class MainActivity extends Activity {
 
 		AndroidInfo androidInfo = Utils.getAndroidInfo(this);
 		((TextView) findViewById(R.id.model)).setText("Model: " + androidInfo.model);
-		((TextView) findViewById(R.id.sdkVersion)).setText("SDK version: " + Integer.toString(androidInfo.sdkVersion));		
-		((TextView) findViewById(R.id.appVersion)).setText("App version: " + Integer.toString(androidInfo.appVersion));		
+		((TextView) findViewById(R.id.sdkVersion)).setText("SDK version: " + Integer.toString(androidInfo.sdkVersion));
+		((TextView) findViewById(R.id.appVersion)).setText("App version: " + Integer.toString(androidInfo.appVersion));
 
 		// queue up a handler to create logs
 		final Handler handler = new Handler();
@@ -60,12 +60,12 @@ public class MainActivity extends Activity {
 			public void run() {
 				debugCounter++;
 				Log.d("Debug event #" + debugCounter);
-				
+
 				if (debugCounter % 2 == 0) {
 					infoCounter++;
 					Log.d("Info event #" + infoCounter);
 				}
-				
+
 				((TextView) findViewById(R.id.counterText)).setText("Events: " + debugCounter + " debug, " + infoCounter + " info");
 
 				handler.postDelayed(this, 1000);
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
 						} else {
 							description = "NOT eligible to receive logs. Are you sure that the android info above matches one of your logcat criteria?";
 						}
-						
+
 						((TextView) findViewById(R.id.description)).setText(description);
 					}
 				});
