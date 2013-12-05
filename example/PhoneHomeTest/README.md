@@ -1,4 +1,4 @@
 PhoneHomeTest
 =============
 
-This is a sample Android application that uses the PhoneHome API.  This particular version interacts with the sample backend provided in samples/backend.  Notice that it enables/disables PhoneHome by checking eligibility and then implements an example log sink to send the logs to our backend.
+Here's an example Android application that uses the PhoneHome API and interacts with the example backend provided in [example/backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/example/backend). It enables/disables PhoneHome by first checking eligibility and then implementing a log sink that sends logs to the backend.
