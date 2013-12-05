@@ -1,4 +1,4 @@
-Samples
+Example
 =======
 
-Here lie a reference project using the PhoneHome library written in Android and a sample backend to handle the flushed logs.
+Here's an example Android project that uses the PhoneHome library and a sample backend that handles flushed logs.
