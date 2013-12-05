@@ -87,4 +87,4 @@ Display
 -------------
 We built a barebones, Bootstrap’d web dashboard to display logs we collected, but you can just as easily look at the lines, by user and device, in your database. In the sample backend application, the logs are stored in the logcat_events table. 
 
-Similarly, you could set user-log configurations using our simple web form or by editing the database directly.
+Similarly, you could set user-log configurations using a simple web form or by editing the database directly.
