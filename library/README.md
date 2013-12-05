@@ -15,20 +15,25 @@ Set up
 
 Set up the configuration for PhoneHome somewhere in your main activity. PhoneHome must be configured initially, but it can always be changed or turned off later.
 
-The most important configuration options are enable() and logSink(). enable() toggles log flushing to the backend, and logSink() specifies how the logs are flushed. When a batch of logs is ready to be flushed, it’s passed to the flushLog() method of the PhoneHomeSink object specified in logSink().
+The most important configuration options are `enable()` and `logSink()`. `enable()` toggles log flushing to the backend, and `logSink()` specifies how the logs are flushed. When a batch of logs is ready to be flushed, it’s passed to the `flushLog()` method of the `PhoneHomeSink` object specified in `logSink()`.
 
 Here's an example configuration:
 
     PhoneHomeConfig.getInstance()
-        .enabled(false)     // set .enabled(..) to true to enable log flushing
-        .batchSize(100)     // wait until we have this many events to flush a batch of logs...
-        .flushIntervalSeconds(1800)    // ... or until this many seconds have passed since our last flush
-        .debugLogLevel(android.util.Log.VERBOSE)        // when developing, log all messages to logcat (everything is flushed to our sink)
-        .productionLogLevel(android.util.Log.INFO)      // in production, only log INFO messages and above to logcat (everything is flushed to our sink)
-        // specify the sink that receives flushed logs (required if you ever enable log flushing!)
+        // enable or disable log flushing
+        .enabled(false)
+        // wait for this many log events before flushing ...
+        .batchSize(100)
+        // ... or until this many seconds have passed between flushes
+        .flushIntervalSeconds(1800)
+        // when developing, log all messages to logcat, then flush everything to the sink
+        .debugLogLevel(android.util.Log.VERBOSE)
+        // in production, only log INFO messages and above to logcat, then flush everything to the sink
+        .productionLogLevel(android.util.Log.INFO)
+        // specify the sink that receives flushed logs. Required if you enable log flushing
         .logSink(new PhoneHomeSink() {
             public void flushLogs(final List<PhoneHomeLogEvent> logEvents) {
-                // flush the log events to your backend
+                // flush log events to your backend
             }
         });
 
@@ -64,7 +69,7 @@ PhoneHome’s logger works similarly. First, construct a `PhoneHomeLogger` insta
 
 Eligibility
 -------------
-To avoid collecting unnecessary logs (and save your users' battery and data plans!), we recommend checking if a user matches a particular criteria set before flushing logs. We’ve included an example of this in the [sample app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples>). Once you've determined whether a user should phone logs home, enabling, disabling, or re-enabling PhoneHome is as easy as:
+To avoid collecting unnecessary logs (and save your users' batteries and data plans!), we recommend checking if a user matches a particular criteria set before flushing logs. We’ve included an example of this in the [sample app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples>). Once you've determined whether a user should phone logs home, enabling, disabling, or re-enabling PhoneHome is as easy as:
 
     boolean isEligible =...; // determine eligibility
     PhoneHomeConfig.getInstance()
@@ -74,9 +79,9 @@ Shipment
 -------------
 When a batch of logs is ready, it's passed to your `PhoneHomeSink` object. From there, you choose what to do, though typically, we think you'll want to send it to your backend with a network request. Since there isn’t a standard Android networking library and backend APIs are different, you’ll want to work it in to your existing patterns for network requests and API calls. Here’s a [sample](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples/backend) of how you might do with this with the AndroidHttpClient.
 
-We recommend specifying the device configuration associated with log events to simplify de-duping. One strategy is sending along the Android device model, SDK version, app versionCode, username, and/or other identifying information with the log events. After all, logs from a misbehaving device aren't very helpful if you can't tell from which device they came!
+We recommend specifying the device configuration associated with log events to simplify de-duping. One strategy is sending along the Android device model, SDK version, app versionCode, username, and/or other identifying information with the log events. After all, logs from a misbehaving device aren't very helpful if you can't tell from which device they came.
 
-Our [example app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples) show one way to send device information with each request.
+Our [example app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples) show one way to send device information with the requests.
 
 Display
 -------------
