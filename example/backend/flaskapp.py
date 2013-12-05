@@ -26,7 +26,7 @@ def logevents():
     user_id = get_user_id()
     model, sdk_version, app_version = get_android_info()
 
-    # confirm that this user can flush data
+    # confirm that this user should flush data
     if is_eligible_for_logcat(user_id, model, sdk_version, app_version):
         add_log_events_for_user(user_id, model, sdk_version, app_version, post_data["events"])
 
@@ -34,13 +34,13 @@ def logevents():
 
 def get_user_id():
     """ Normally, you'd fetch this from the request context (or request.session)
-
     This is just an arbitrary UUID. """
 
     return "9f13322ea7c04539bef01f488c70e431"
 
 def get_android_info():
     """ Send these along as headers in your API request. """
+
     # android.os.Build.MODEL
     model = request.headers.get("X-Android-Model")
 
