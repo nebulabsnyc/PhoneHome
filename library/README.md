@@ -1,25 +1,35 @@
 PhoneHome
 =========
 
-This is an Android library project.  To use it, add it as an existing project in Eclipse.  In your project, select "Properties>Android" and add a reference to it as an external library.
-
-Configuration
+Installation
 -------------
 
-To configure PhoneHome, access the PhoneHomeConfig singleton and set properties as in the provided sample (samples/PhoneHomeTest)
+This is an Android library project. To use it:
+
+1. Download the library.
+2. [Add it as an existing project](http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-importproject.htm) in Eclipse.
+3. In your project settings, select Properties > Android and add the PhoneHome library as an external library.
+
+Set up
+-------------
+
+Set up the configuration for PhoneHome somewhere in your main activity. PhoneHome must be configured initially, but it can always be changed or turned off later.
+
+The most important configuration options are enable() and logSink(). enable() toggles log flushing to the backend, and logSink() specifies how the logs are flushed. When a batch of logs is ready to be flushed, it’s passed to the flushLog() method of the PhoneHomeSink object specified in logSink().
+
+Here's an example configuration:
 
     PhoneHomeConfig.getInstance()
-    // disable sending log flushing for now
-    .enabled(false)
-    // wait until we have this many events to flush a batch of logs...
-    .batchSize(100)
-    // ... or until this many seconds have passed since our last flush
-    .flushIntervalSeconds(1800)
-    // when developing, log all messages to logcat (everything is flushed to our sink)
-    .debugLogLevel(android.util.Log.VERBOSE)
-    // in production, only log INFO messages and above to logcat (everything is flushed to our sink)
-    .productionLogLevel(android.util.Log.INFO)
-    // the actual sink used when it's time to flush logs (required if you ever enable log flushing!)
-    .logSink(new ExampleSink(this));
+        .enabled(false)     // set .enabled(..) to true to enable log flushing
+        .batchSize(100)     // wait until we have this many events to flush a batch of logs...
+        .flushIntervalSeconds(1800)    // ... or until this many seconds have passed since our last flush
+        .debugLogLevel(android.util.Log.VERBOSE)        // when developing, log all messages to logcat (everything is flushed to our sink)
+        .productionLogLevel(android.util.Log.INFO)      // in production, only log INFO messages and above to logcat (everything is flushed to our sink)
+        // specify the sink that receives flushed logs (required if you ever enable log flushing!)
+        .logSink(new PhoneHomeSink() {
+            public void flushLogs(final List<PhoneHomeLogEvent> logEvents) {
+                // flush the log events to your backend
+            }
+        });
 
-Please note that if you set enabled(true), you must provide a valid PhoneHomeSink to logSink.  The default sink will raise an exception when called.
+If you set `enabled(true)`, you must provide a valid `PhoneHomeSink` to `logSink`.  The default sink will raise an exception when called.
