@@ -66,7 +66,7 @@ CREATE TABLE "android_info" (
 );
 
 
--- the action events
+-- the logcat events
 CREATE TABLE logcat_events (
     "user_id"                  UUID         REFERENCES "users"("id")
                                             NOT NULL,
