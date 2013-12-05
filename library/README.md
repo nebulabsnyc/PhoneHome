@@ -33,3 +33,53 @@ Here's an example configuration:
         });
 
 If you set `enabled(true)`, you must provide a valid `PhoneHomeSink` to `logSink`.  The default sink will raise an exception when called.
+
+Collection
+-------------
+Using PhoneHome's logger instead of Android's system logger is easy. 
+
+First, here’s a typical pattern that uses Android’s system logger:
+
+    public class MyClass {
+        private static final TAG = “MyClass”;
+
+        MyClass() {
+            Log.d(TAG, “Debug!”);
+            Log.i(TAG, “Info!”);
+            Log.e(TAG, “Oh dear.”);
+        }
+    }
+
+PhoneHome’s logger works similarly. First, construct a `PhoneHomeLogger` instance for each `TAG`. (Now, you don’t have to type the first parameter over and over.) Then, use the PhoneHomeLogger instance as you would Android’s system logger:
+
+    public class MyClass {
+        private static final PhoneHomeLogger Log = PhoneHomeLogger.forClass(MyClass .class);
+
+        MyClass() {
+            Log.d(“Debug!”);
+            Log.i(“Info!”);
+            Log.e(“Oh dear.”);
+        }
+    }
+
+Eligibility
+-------------
+To avoid collecting unnecessary logs (and save your users' battery and data plans!), we recommend checking if a user matches a particular criteria set before flushing logs. We’ve included an example of this in the [sample app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples>). Once you've determined whether a user should phone logs home, enabling, disabling, or re-enabling PhoneHome is as easy as:
+
+    boolean isEligible =...; // determine eligibility
+    PhoneHomeConfig.getInstance()
+        .enabled(isEligible);
+
+Shipment
+-------------
+When a batch of logs is ready, it's passed to your `PhoneHomeSink` object. From there, you choose what to do, though typically, we think you'll want to send it to your backend with a network request. Since there isn’t a standard Android networking library and backend APIs are different, you’ll want to work it in to your existing patterns for network requests and API calls. Here’s a [sample](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples/backend) of how you might do with this with the AndroidHttpClient.
+
+We recommend specifying the device configuration associated with log events to simplify de-duping. One strategy is sending along the Android device model, SDK version, app versionCode, username, and/or other identifying information with the log events. After all, logs from a misbehaving device aren't very helpful if you can't tell from which device they came!
+
+Our [example app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples) show one way to send device information with each request.
+
+Display
+-------------
+We built a barebones, Bootstrap’d web dashboard to display logs we collected, but you can just as easily look at the lines, by user and device, in your database. In the sample backend application, the logs are stored in the logcat_events table. 
+
+Similarly, you could set user-log configurations using our simple web form or by editing the database directly.
