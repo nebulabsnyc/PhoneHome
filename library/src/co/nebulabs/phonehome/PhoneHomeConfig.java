@@ -46,8 +46,8 @@ public final class PhoneHomeConfig {
 	}
 
 	/**
-	 * Configure the sink for flushing logs externally. This is required if
-	 * PhoneHome is enabled.
+	 * Configure the sink for flushing logs externally. Required if PhoneHome
+	 * is enabled.
 	 * 
 	 * @return
 	 */
@@ -95,9 +95,9 @@ public final class PhoneHomeConfig {
 	}
 
 	/**
-	 * Batch size for log events before flushing. If your sink sends log lines
-	 * across a network, larger values send more data in fewer batches. Smaller
-	 * values send smaller, more-frequent bursts.
+	 * Get and set batch size for log events before flushing. If your sink sends log
+	 * lines across a network, larger values send more data in fewer batches.
+	 * Smaller values send smaller, more-frequent bursts of data.
 	 * 
 	 * Defaults to 100 log events.
 	 * 
@@ -113,9 +113,9 @@ public final class PhoneHomeConfig {
 	}
 
 	/**
-	 * If we haven't sent a batch in this many seconds, flush logs, regardless
-	 * of whether we have enough for a full batch. This ensures that we don't
-	 * have logs lingering on the client side waiting to be sent.
+	 * If we haven't sent a batch in IntervalSeconds seconds, flush logs, regardless
+	 * of whether we have a full batch. This way, we won't have logs linger on the
+	 * client, waiting to be sent.
 	 * 
 	 * Defaults to 1800 seconds, or 30 minutes.
 	 * 
