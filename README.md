@@ -12,7 +12,7 @@ PhoneHome is made with love by Nebula Labs in New York City.
 * Matt Spitz - [@mattspitz](http://twitter.com/mattspitz)
 
 License
-    -------
+-------
 
     Copyright 2013 Nebula Labs, Inc.
 
