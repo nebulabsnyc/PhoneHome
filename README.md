@@ -1,18 +1,18 @@
 PhoneHome
 =========
 
-PhoneHome is an standalone library designed to facilitate sending application logs from remote users to a centralized server for debugging.
+PhoneHome is a standalone library that sends logs from remote Android devices to a central server for debugging. PhoneHome requires nothing of end users.
 
 Developed By
 ------------
 
-PhoneHome is made with love by Nebula Labs, Inc.
+PhoneHome is made with love by Nebula Labs in New York City.
 
 * Christina Cacioppo - [@christinacaci](http://twitter.com/christinacaci)
 * Matt Spitz - [@mattspitz](http://twitter.com/mattspitz)
 
 License
--------
+    -------
 
     Copyright 2013 Nebula Labs, Inc.
 
