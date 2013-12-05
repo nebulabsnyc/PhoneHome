@@ -32,4 +32,4 @@ Check eligibility by clicking the button.  The app generates logs and flushes th
 Configuration
 -------------
 
-You can add new criteria or users that you'd like to send logs to your backend by modifying the logcat\_criteria table.  View the logs themselves in logcat\_events.  They're best ordered by `(client\_ts, insert\_order)`.
+You can add new criteria or users that you'd like to send logs to your backend by modifying the logcat\_criteria table.  View the logs themselves in logcat\_events.  They're best ordered by `(client_ts, insert_order)`.
