@@ -95,7 +95,7 @@ public final class PhoneHomeConfig {
 	}
 
 	/**
-	 * Get and set batch size for log events before flushing. If your sink sends log
+	 * Set batch size for log events before flushing. If your sink sends log
 	 * lines across a network, larger values send more data in fewer batches.
 	 * Smaller values send smaller, more-frequent bursts of data.
 	 * 
