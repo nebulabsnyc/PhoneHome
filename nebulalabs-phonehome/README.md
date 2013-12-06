@@ -77,7 +77,7 @@ To avoid collecting unnecessary logs (and save your users' batteries and data pl
 
 Shipment
 -------------
-When a batch of logs is ready, it's passed to your `PhoneHomeSink` object. From there, you choose what to do, though typically, we think you'll want to send it to your backend with a network request. Since there isn’t a standard Android networking library and backend APIs are different, you’ll want to work it in to your existing patterns for network requests and API calls. Here’s an [example](https://github.com/nebulabsnyc/PhoneHome/tree/master/example/backend) of how you might do with this with the AndroidHttpClient.
+When a batch of logs is ready, it's passed to your `PhoneHomeSink` object. From there, you choose what to do, though typically, we think you'll want to send it to your backend with a network request. Since there isn’t a standard Android networking library and backend APIs are different, you’ll want to work it in to your existing patterns for network requests and API calls. Here’s an [example](https://github.com/nebulabsnyc/PhoneHome/blob/master/example/PhoneHomeTest/src/com/example/phonehometest/example/ExampleSink.java) of how you might do with this with the AndroidHttpClient.
 
 We recommend specifying the device configuration associated with log events to simplify de-duping. One strategy is sending along the Android device model, SDK version, app versionCode, username, and/or other identifying information with the log events. After all, logs from a misbehaving device aren't very helpful if you can't tell from which device they came.
 
