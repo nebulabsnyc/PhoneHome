@@ -10,12 +10,12 @@ This is an Android library project. To use it:
 2. [Add it as an existing project](http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-importproject.htm) in Eclipse.
 3. In your project settings, select Properties > Android and add the PhoneHome library as an external library.
 
-Set up
+Setup
 -------------
 
-Set up the configuration for PhoneHome somewhere in your main activity. PhoneHome must be configured initially, but it can always be changed or turned off later.
+Configure PhoneHome in the `onCreate()` of your main activity (the one associated with the `android.intent.action.MAIN` intent). PhoneHome must be configured initially, but it can always be changed or turned off later.
 
-The most important configuration options are `enable()` and `logSink()`. `enable()` toggles log flushing to the backend, and `logSink()` specifies how the logs are flushed. When a batch of logs is ready to be flushed, it’s passed to the `flushLog()` method of the `PhoneHomeSink` object specified in `logSink()`.
+The most important configuration options are `enable()` and `logSink()`. `enable()` toggles log flushing to the backend, and `logSink()` specifies how the logs are flushed. When a batch of logs is ready to be flushed, it’s passed to the `flushLogs()` method of the PhoneHomeSink object specified in `logSink()`.
 
 Here's an example configuration:
 
@@ -41,7 +41,7 @@ If you set `enabled(true)`, you must provide a valid `PhoneHomeSink` to `logSink
 
 Collection
 -------------
-Using PhoneHome's logger instead of Android's system logger is easy. 
+Using PhoneHome's logger instead of Android's system logger is easy.
 
 First, here’s a typical pattern that uses Android’s system logger:
 
@@ -69,7 +69,7 @@ PhoneHome’s logger works similarly. First, construct a `PhoneHomeLogger` insta
 
 Eligibility
 -------------
-To avoid collecting unnecessary logs (and save your users' batteries and data plans!), we recommend checking if a user matches a particular criteria set before flushing logs. We’ve included an example of this in the [sample app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples>). Once you've determined whether a user should phone logs home, enabling, disabling, or re-enabling PhoneHome is as easy as:
+To avoid collecting unnecessary logs (and save your users' batteries and data plans!), we recommend checking if a user matches a particular criteria set before flushing logs. We’ve included an example of this in the [example app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/example>). Once you've determined whether a user should phone logs home, enabling, disabling, or re-enabling PhoneHome is as easy as:
 
     boolean isEligible =...; // determine eligibility
     PhoneHomeConfig.getInstance()
@@ -77,14 +77,14 @@ To avoid collecting unnecessary logs (and save your users' batteries and data pl
 
 Shipment
 -------------
-When a batch of logs is ready, it's passed to your `PhoneHomeSink` object. From there, you choose what to do, though typically, we think you'll want to send it to your backend with a network request. Since there isn’t a standard Android networking library and backend APIs are different, you’ll want to work it in to your existing patterns for network requests and API calls. Here’s a [sample](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples/backend) of how you might do with this with the AndroidHttpClient.
+When a batch of logs is ready, it's passed to your `PhoneHomeSink` object. From there, you choose what to do, though typically, we think you'll want to send it to your backend with a network request. Since there isn’t a standard Android networking library and backend APIs are different, you’ll want to work it in to your existing patterns for network requests and API calls. Here’s an [example](https://github.com/nebulabsnyc/PhoneHome/tree/master/example/backend) of how you might do with this with the AndroidHttpClient.
 
 We recommend specifying the device configuration associated with log events to simplify de-duping. One strategy is sending along the Android device model, SDK version, app versionCode, username, and/or other identifying information with the log events. After all, logs from a misbehaving device aren't very helpful if you can't tell from which device they came.
 
-Our [example app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/samples) show one way to send device information with the requests.
+Our [example app and backend](https://github.com/nebulabsnyc/PhoneHome/tree/master/example) show one way to send device information with the requests.
 
 Display
 -------------
-We built a barebones, Bootstrap’d web dashboard to display logs we collected, but you can just as easily look at the lines, by user and device, in your database. In the sample backend application, the logs are stored in the logcat_events table. 
+We built a barebones, Bootstrap’d web dashboard to display logs we collected, but you can just as easily look at the lines, by user and device, in your database. In the sample backend application, the logs are stored in the `logcat_events` table.
 
 Similarly, you could set user-log configurations using a simple web form or by editing the database directly.
