@@ -49,7 +49,7 @@ def get_android_info():
 
     # PackageManager manager = applicationContext.getPackageManager();
     # PackageInfo info = manager.getPackageInfo("com.your.package.name", 0);
-    # info.versionCode; <--
+    # int thisIsTheVersionCode = info.versionCode;
     app_version = request.headers.get("X-Android-AppVersion")
 
     return model, sdk_version, app_version
